@@ -1,0 +1,56 @@
+/* Bienvenida.css - Estilos exactos del bienvenida.html original */
+.welcome-container {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-align: center;
+    padding: 4rem 2rem;
+    border-radius: 15px;
+    box-shadow: var(--card-shadow);
+}
+
+.welcome-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+}
+
+.feature-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.2rem 1rem;        /* 🔽 antes era 2rem, ahora más compacto */
+    margin: 0.4rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    text-align: center;
+    min-height: 180px;           /* 🔽 altura más baja pero consistente */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;     /* centra el contenido verticalmente */
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.feature-card img {
+    height: 42px;                /* 🔽 ligeramente más pequeño */
+    margin-bottom: 0.25rem;
+    margin-top: 1rem;
+}
+
+.feature-card h3 {
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 2rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.feature-card p {
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+.features-container {
+    margin-top: 10px;
+}

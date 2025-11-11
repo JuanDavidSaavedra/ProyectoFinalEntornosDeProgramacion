@@ -17,6 +17,6 @@ public interface IReservaService {
 
     Reserva update(Integer id, ReservaRequest reservaRequest);
 
-    void actualizarEstadosAutomaticamente();
+    boolean actualizarEstadosAutomaticamente();
 }
 

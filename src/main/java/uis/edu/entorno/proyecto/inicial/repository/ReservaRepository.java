@@ -13,6 +13,10 @@ public interface ReservaRepository extends JpaRepository<Reserva, Integer> {
     List<Reserva> findByUsuarioId(Integer usuarioId);
     List<Reserva> findByCanchaId(Integer canchaId);
 
+    // Nuevo método para validar límite de horas
+    List<Reserva> findByUsuarioIdAndCanchaIdAndFechaAndEstadoNot(
+            Integer usuarioId, Integer canchaId, LocalDate fecha, String estado);
+
     List<Reserva> findByEstado(String estado);
 
     // Método para verificar disponibilidad
@@ -25,5 +29,4 @@ public interface ReservaRepository extends JpaRepository<Reserva, Integer> {
             Integer canchaId, LocalDate fecha, LocalTime horaFin, LocalTime horaInicio, String estado, Integer id);
 
     List<Reserva> findAllByOrderByIdAsc();
-
 }

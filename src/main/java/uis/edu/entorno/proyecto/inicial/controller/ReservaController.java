@@ -140,8 +140,12 @@ public class ReservaController {
     @PostMapping("/actualizar-estados")
     public ResponseEntity<ApiResponse> actualizarEstados() {
         try {
-            reservaService.actualizarEstadosAutomaticamente();
-            return ResponseEntity.ok(ApiResponse.success("Estados actualizados automáticamente"));
+            boolean seActualizo = reservaService.actualizarEstadosAutomaticamente();
+            String mensaje = seActualizo ?
+                    "Estados actualizados automáticamente. Se modificaron algunos estados." :
+                    "Estados verificados. No se requirieron cambios.";
+
+            return ResponseEntity.ok(ApiResponse.success(mensaje));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(ApiResponse.error("Error al actualizar estados: " + e.getMessage()));
         }

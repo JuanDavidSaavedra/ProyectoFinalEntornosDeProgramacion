@@ -1,0 +1,133 @@
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { ApiService, SessionHelper } from '../services/api';
+import Navbar from './Navbar';
+import './Usuarios.css';
+
+const Usuarios = () => {
+    const [usuarios, setUsuarios] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        if (!SessionHelper.isLoggedIn()) {
+            window.location.href = '/login';
+            return;
+        }
+        cargarUsuarios();
+    }, []);
+
+    const cargarUsuarios = async () => {
+        try {
+            const response = await ApiService.get('/usuarios');
+            if (response.success) {
+                setUsuarios(response.data);
+            } else {
+                alert('Error al cargar usuarios: ' + response.message);
+            }
+        } catch (error) {
+            console.error('Error al cargar usuarios:', error);
+            alert('Error al cargar usuarios: ' + error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const eliminarUsuario = async (id) => {
+        if (window.confirm('¿Está seguro de eliminar este usuario? Se eliminarán también todas las reservas asociadas.')) {
+            try {
+                const response = await ApiService.delete(`/usuarios/${id}`);
+                if (response.success) {
+                    alert('Usuario eliminado correctamente');
+                    cargarUsuarios();
+                } else {
+                    alert(response.message);
+                }
+            } catch (error) {
+                alert('Error al eliminar usuario: ' + error.message);
+            }
+        }
+    };
+
+    const isAdmin = SessionHelper.isAdmin();
+
+    if (loading) {
+        return (
+            <div className="page-fade-in">
+                <Navbar />
+                <div className="container page-container">Cargando...</div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="usuarios-page page-fade-in"> {/* Agregar page-fade-in */}
+            <Navbar />
+            <div className="container page-container">
+                <div className="card shadow-sm fade-in"> {/* Agregar fade-in al card */}
+                    <div className="card-header bg-primary">
+                        <h2 className="mb-0 text-white">👥 Gestión de Usuarios</h2>
+                    </div>
+                    <div className="card-body">
+                        {isAdmin && (
+                            <div className="mb-3" id="adminActions">
+                                <Link to="/form-usuarios" className="btn btn-success">
+                                    <i className="fas fa-plus me-2"></i>Agregar Usuario
+                                </Link>
+                            </div>
+                        )}
+
+                        <div className="table-responsive">
+                            <table className="table table-striped table-hover align-middle">
+                                <thead className="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Cédula</th>
+                                    <th>Nombre</th>
+                                    <th>Email</th>
+                                    <th>Usuario</th>
+                                    <th>Rol</th>
+                                    {isAdmin && <th id="actionsHeader">Acciones</th>}
+                                </tr>
+                                </thead>
+                                <tbody id="tablaUsuarios">
+                                {usuarios.map(usuario => {
+                                    let badgeClass = 'bg-secondary';
+                                    if (usuario.rol === 'ADMIN') badgeClass = 'bg-danger';
+                                    else if (usuario.rol === 'OPERATOR') badgeClass = 'bg-warning text-dark';
+                                    else if (usuario.rol === 'USER') badgeClass = 'bg-info';
+
+                                    return (
+                                        <tr key={usuario.id}>
+                                            <td>{usuario.id}</td>
+                                            <td>{usuario.cedula}</td>
+                                            <td>{usuario.nombre}</td>
+                                            <td>{usuario.email}</td>
+                                            <td>{usuario.usuario}</td>
+                                            <td><span className={`badge ${badgeClass}`}>{usuario.rol}</span></td>
+                                            {isAdmin && (
+                                                <td>
+                                                    <div className="btn-group-table">
+                                                        <Link to={`/form-usuarios?id=${usuario.id}`} className="btn btn-sm btn-warning">Editar</Link>
+                                                        <button
+                                                            onClick={() => eliminarUsuario(usuario.id)}
+                                                            className="btn btn-sm btn-danger"
+                                                        >
+                                                            Eliminar
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            )}
+                                        </tr>
+                                    );
+                                })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default Usuarios;

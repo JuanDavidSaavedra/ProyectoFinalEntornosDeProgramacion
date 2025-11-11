@@ -1876,7 +1876,7 @@ iframe {
 }
 
 
-canchas.js:
+Canchas.js:
 // Verificar si estamos en una página que necesita este script
 if (document.getElementById('tablaCanchas') || window.location.pathname.includes('form_canchas.html')) {
 
@@ -2072,7 +2072,7 @@ if (document.getElementById('loginForm') || window.location.pathname.includes('i
 }
 
 
-menu.js:
+Menu.js:
 // Verificar si estamos en la página del menú
 if (window.location.pathname.includes('menu.html') || document.getElementById('userInfo')) {
 
@@ -2837,7 +2837,7 @@ canchas.html:
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="js/request.js"></script>
-<script src="js/canchas.js"></script>
+<script src="js/Canchas.js"></script>
 </body>
 </html>
 
@@ -2913,7 +2913,7 @@ form_canchas.html:
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="js/request.js"></script>
-<script src="js/canchas.js"></script>
+<script src="js/Canchas.js"></script>
 </body>
 </html>
 
@@ -3497,7 +3497,7 @@ menu.html:
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
         crossorigin="anonymous"></script>
 <script src="js/request.js"></script>
-<script src="js/menu.js"></script>
+<script src="js/Menu.js"></script>
 </body>
 </html>
 

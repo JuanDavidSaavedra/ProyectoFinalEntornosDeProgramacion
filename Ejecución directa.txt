@@ -1,0 +1,13 @@
+Ejecución directa
+Para ejecutar sin builds:
+
+Backend: Ejecuta directamente desde tu IDE o con:
+
+bash
+mvn spring-boot:run
+
+Frontend: En otra terminal, dentro de src/main/resources/static/frontend-reservas:
+
+PS C:\Users\juanj\Documents\workspace-spring-tools-for-eclipse-4.31.0.RELEASE\ProyectoInicial\src\main\resources\static\frontend-reservas>
+
+npm start

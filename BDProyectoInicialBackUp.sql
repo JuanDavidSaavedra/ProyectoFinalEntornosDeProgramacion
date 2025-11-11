@@ -28,13 +28,13 @@ CREATE TABLE `canchas` (
   `deporte` varchar(50) NOT NULL,
   `ubicacion` varchar(150) NOT NULL,
   `precio_hora` double NOT NULL,
-  `capacidad` int NOT NULL DEFAULT '10',
+  `capacidad` int NOT NULL DEFAULT '30',
   `hora_apertura` time NOT NULL DEFAULT '05:00:00',
   `hora_cierre` time NOT NULL DEFAULT '22:00:00',
   `estado` varchar(20) DEFAULT 'ACTIVA' COMMENT 'ACTIVA, INACTIVA',
   `creado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -43,7 +43,7 @@ CREATE TABLE `canchas` (
 
 LOCK TABLES `canchas` WRITE;
 /*!40000 ALTER TABLE `canchas` DISABLE KEYS */;
-INSERT INTO `canchas` VALUES (1,'Cancha Principal Fútbol 5','Fútbol','Bogotá, Localidad de Chapinero, Cr 15 #45-20',45000,10,'05:00:00','22:00:00','ACTIVA','2025-10-17 04:53:31'),(2,'Cancha Sintética El Gol','Fútbol','Medellín, Barrio El Poblado, Cl 10 #40-35',50000,12,'06:00:00','23:00:00','ACTIVA','2025-10-17 04:53:31'),(3,'Cancha Techada Los Deportistas','Fútbol','Cali, Barrio Granada, Av 5N #20-15',40000,8,'05:00:00','21:00:00','ACTIVA','2025-10-17 04:53:31'),(4,'Cancha Básquet Centro','Básquetbol','Barranquilla, Centro, Cr 44 #35-10',30000,15,'05:00:00','22:00:00','ACTIVA','2025-10-17 04:53:31'),(5,'Cancha Voleibol Playa','Voleibol','Cartagena, Bocagrande, Av San Martín #5-60',35000,12,'06:00:00','20:00:00','ACTIVA','2025-10-17 04:53:31'),(6,'Cancha Múltiple','Múltiple','Bucaramanga, Cabecera, Cl 34 #25-40',38000,20,'05:00:00','22:00:00','ACTIVA','2025-10-17 04:53:31'),(7,'Cancha Tenis Club','Tenis','Pereira, Barrio Cuba, Av Circunvalar #12-30',55000,4,'07:00:00','21:00:00','ACTIVA','2025-10-17 04:53:31'),(8,'Cancha Fútbol 7 La Victoria','Fútbol','Bogotá, Localidad de Usaquén, Tv 15 #120-25',48000,14,'05:00:00','23:00:00','ACTIVA','2025-10-17 04:53:31'),(9,'Cancha Sintética Padel','Pádel','Medellín, Laureles, Cr 70 #25-15',42000,4,'08:00:00','20:00:00','INACTIVA','2025-10-17 04:53:31'),(10,'Cancha Rugby Los Andes','Rugby','Bogotá, Localidad de Suba, Cl 145 #90-10',47000,20,'05:00:00','22:00:00','ACTIVA','2025-10-17 04:53:31');
+INSERT INTO `canchas` VALUES (1,'Cancha Principal Fútbol 5','Fútbol','Bogotá, Localidad de Chapinero, Cr 15 #45-20',45000,40,'05:00:00','22:00:00','ACTIVA','2025-10-17 10:44:21'),(2,'Cancha Sintética El Gol','Fútbol','Medellín, Barrio El Poblado, Cl 10 #40-35',50000,45,'06:00:00','23:00:00','ACTIVA','2025-10-17 05:06:16'),(3,'Cancha Techada Los Deportistas','Fútbol','Cali, Barrio Granada, Av 5N #20-15',40000,35,'05:00:00','21:00:00','ACTIVA','2025-10-17 05:06:16'),(4,'Cancha Básquet Centro','Básquetbol','Barranquilla, Centro, Cr 44 #35-10',30000,30,'05:00:00','22:00:00','ACTIVA','2025-10-17 05:06:16'),(5,'Cancha Voleibol Playa','Voleibol','Cartagena, Bocagrande, Av San Martín #5-60',35000,30,'06:00:00','20:00:00','ACTIVA','2025-10-17 05:06:16'),(6,'Cancha Múltiple','Múltiple','Bucaramanga, Cabecera, Cl 34 #25-40',38000,50,'05:00:00','22:00:00','ACTIVA','2025-10-17 05:06:16'),(7,'Cancha Tenis Club','Tenis','Pereira, Barrio Cuba, Av Circunvalar #12-30',55000,30,'07:00:00','21:00:00','ACTIVA','2025-10-17 05:06:16'),(8,'Cancha Fútbol 7 La Victoria','Fútbol','Bogotá, Localidad de Usaquén, Tv 15 #120-25',48000,40,'05:00:00','23:00:00','ACTIVA','2025-10-17 05:06:16'),(10,'Cancha Rugby Los Andes','Rugby','Bogotá, Localidad de Suba, Cl 145 #90-10',47000,50,'05:00:00','22:00:00','ACTIVA','2025-10-17 05:06:16'),(11,'Cancha Principal Fútbol 463','Tenis','bufasa, qr ',19000,32,'10:00:00','23:00:00','ACTIVA','2025-10-17 10:19:46'),(12,'juan David fasafs','Tenis','Bogotá, Localidad de Chapinero, Cr 15 #45-20',9000,34,'05:00:00','22:00:00','INACTIVA','2025-10-17 20:20:32');
 /*!40000 ALTER TABLE `canchas` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -68,7 +68,7 @@ CREATE TABLE `reservas` (
   KEY `cancha_id` (`cancha_id`),
   CONSTRAINT `reservas_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE,
   CONSTRAINT `reservas_ibfk_2` FOREIGN KEY (`cancha_id`) REFERENCES `canchas` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -77,7 +77,7 @@ CREATE TABLE `reservas` (
 
 LOCK TABLES `reservas` WRITE;
 /*!40000 ALTER TABLE `reservas` DISABLE KEYS */;
-INSERT INTO `reservas` VALUES (1,4,1,'2025-10-10','14:00:00','16:00:00','FINALIZADA','2025-10-17 04:53:31'),(2,5,2,'2025-10-12','16:00:00','18:00:00','FINALIZADA','2025-10-17 04:53:31'),(3,6,3,'2025-10-14','10:00:00','12:00:00','FINALIZADA','2025-10-17 04:53:31'),(4,7,4,'2025-10-16','09:00:00','11:00:00','FINALIZADA','2025-10-17 04:53:31'),(5,8,5,'2025-10-16','14:00:00','16:00:00','FINALIZADA','2025-10-17 04:53:31'),(6,9,6,'2025-10-16','18:00:00','20:00:00','FINALIZADA','2025-10-17 04:53:31'),(7,10,1,'2025-10-16','15:00:00','22:00:00','FINALIZADA','2025-10-17 04:53:31'),(8,6,1,'2025-10-20','11:00:00','13:00:00','ACTIVA','2025-10-17 04:53:31'),(9,5,1,'2025-10-22','16:00:00','18:00:00','ACTIVA','2025-10-17 04:53:31'),(10,6,2,'2025-10-17','10:00:00','12:00:00','CANCELADA','2025-10-17 04:53:31'),(11,7,3,'2025-10-19','14:00:00','16:00:00','CANCELADA','2025-10-17 04:53:31');
+INSERT INTO `reservas` VALUES (1,4,1,'2025-10-17','10:00:00','10:53:00','FINALIZADA','2025-10-17 05:06:16'),(2,5,2,'2025-10-12','16:00:00','18:00:00','FINALIZADA','2025-10-17 05:06:16'),(3,6,3,'2025-10-14','10:00:00','12:00:00','FINALIZADA','2025-10-17 05:06:16'),(4,7,4,'2025-10-16','09:00:00','11:00:00','FINALIZADA','2025-10-17 05:06:16'),(5,8,5,'2025-10-16','14:00:00','16:00:00','FINALIZADA','2025-10-17 05:06:16'),(6,9,6,'2025-10-16','18:00:00','20:00:00','FINALIZADA','2025-10-17 05:06:16'),(7,10,1,'2025-10-16','14:00:00','16:00:00','FINALIZADA','2025-10-17 05:06:16'),(8,4,1,'2025-10-16','14:00:00','16:00:00','FINALIZADA','2025-10-17 05:06:16'),(9,5,1,'2025-10-16','14:00:00','16:00:00','FINALIZADA','2025-10-17 05:06:16'),(10,10,7,'2025-10-18','15:00:00','17:00:00','ACTIVA','2025-10-17 05:06:16'),(11,4,1,'2025-10-17','10:00:00','10:54:00','FINALIZADA','2025-10-17 05:06:16'),(12,5,1,'2025-10-22','16:00:00','18:00:00','ACTIVA','2025-10-17 05:06:16'),(13,6,2,'2025-10-17','10:00:00','12:00:00','CANCELADA','2025-10-17 05:06:16'),(14,7,3,'2025-10-19','14:00:00','16:00:00','CANCELADA','2025-10-17 05:06:16');
 /*!40000 ALTER TABLE `reservas` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -101,7 +101,7 @@ CREATE TABLE `usuarios` (
   UNIQUE KEY `cedula` (`cedula`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `usuario` (`usuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -110,7 +110,7 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'1005451321','Juan David','juan2214111@correo.uis.edu.co','admin','123','ADMIN','2025-10-17 04:53:31'),(2,'987654321','Ana Operadora','ana.operadora@proyectoinicial.com','anaoperator','$2a$10$ABCDEFGHIJKLMNOPQRSTUVWXYZ012345','OPERATOR','2025-10-17 04:53:31'),(3,'456789123','Luis Manager','luis.manager@proyectoinicial.com','luismanager','$2a$10$ABCDEFGHIJKLMNOPQRSTUVWXYZ012345','ADMIN','2025-10-17 04:53:31'),(4,'1001234567','María González','maria.gonzalez@email.com','mariagonz','$2a$10$ABCDEFGHIJKLMNOPQRSTUVWXYZ012345','USER','2025-10-17 04:53:31'),(5,'1002345678','Juan Pérez','juan.perez@email.com','juanperez','$2a$10$ABCDEFGHIJKLMNOPQRSTUVWXYZ012345','USER','2025-10-17 04:53:31'),(6,'1003456789','Laura Martínez','laura.martinez@email.com','lauramart','$2a$10$ABCDEFGHIJKLMNOPQRSTUVWXYZ012345','USER','2025-10-17 04:53:31'),(7,'1004567890','Carlos Rodríguez','carlos.rodriguez@email.com','carlosrod','$2a$10$ABCDEFGHIJKLMNOPQRSTUVWXYZ012345','USER','2025-10-17 04:53:31'),(8,'1005678901','Ana López','ana.lopez@email.com','analopez','$2a$10$ABCDEFGHIJKLMNOPQRSTUVWXYZ012345','USER','2025-10-17 04:53:31'),(9,'1006789012','David Hernández','david.hernandez@email.com','davidher','$2a$10$ABCDEFGHIJKLMNOPQRSTUVWXYZ012345','USER','2025-10-17 04:53:31'),(10,'1007890123','Sofia Díaz','sofia.diaz@email.com','sofiadiaz','$2a$10$ABCDEFGHIJKLMNOPQRSTUVWXYZ012345','USER','2025-10-17 04:53:31'),(11,'1008901234','Miguel Torres','miguel.torres@email.com','migueltor','$2a$10$ABCDEFGHIJKLMNOPQRSTUVWXYZ012345','USER','2025-10-17 04:53:31'),(12,'1009012345','Isabella Ramírez','isabella.ramirez@email.com','isabellar','$2a$10$ABCDEFGHIJKLMNOPQRSTUVWXYZ012345','USER','2025-10-17 04:53:31'),(13,'1010123456','Andrés Silva','andres.silva@email.com','andressil','$2a$10$ABCDEFGHIJKLMNOPQRSTUVWXYZ012345','USER','2025-10-17 04:53:31');
+INSERT INTO `usuarios` VALUES (1,'1005451321','Juan David','juan2214111@correo.uis.edu.co','admin','123','ADMIN','2025-10-17 05:06:16'),(2,'987654321','Ana Operadora','ana.operadora@proyectoinicial.com','anaoperator','$2a$10$ABCDEFGHIJKLMNOPQRSTUVWXYZ012345','OPERATOR','2025-10-17 05:06:16'),(3,'456789123','Luis Manager','luis.manager@proyectoinicial.com','luismanager','$2a$10$ABCDEFGHIJKLMNOPQRSTUVWXYZ012345','ADMIN','2025-10-17 05:06:16'),(4,'1001234567','María González','maria.gonzalez@email.com','mariagonz','$2a$10$ABCDEFGHIJKLMNOPQRSTUVWXYZ012345','USER','2025-10-17 05:06:16'),(5,'1002345678','Juan Pérez','juan.perez@email.com','juanperez','$2a$10$ABCDEFGHIJKLMNOPQRSTUVWXYZ012345','USER','2025-10-17 05:06:16'),(6,'1003456789','Laura Martínez','laura.martinez@email.com','lauramart','$2a$10$ABCDEFGHIJKLMNOPQRSTUVWXYZ012345','USER','2025-10-17 05:06:16'),(7,'1004567890','Carlos Rodríguez','carlos.rodriguez@email.com','carlosrod','$2a$10$ABCDEFGHIJKLMNOPQRSTUVWXYZ012345','USER','2025-10-17 05:06:16'),(8,'1005678901','Ana López','ana.lopez@email.com','analopez','$2a$10$ABCDEFGHIJKLMNOPQRSTUVWXYZ012345','USER','2025-10-17 05:06:16'),(9,'1006789012','David Hernández','david.hernandez@email.com','davidher','$2a$10$ABCDEFGHIJKLMNOPQRSTUVWXYZ012345','USER','2025-10-17 05:06:16'),(10,'1007890123','Sofia Díaz','sofia.diaz@email.com','sofiadiaz','$2a$10$ABCDEFGHIJKLMNOPQRSTUVWXYZ012345','USER','2025-10-17 05:06:16'),(11,'1008901234','Miguel Torres','miguel.torres@email.com','migueltor','$2a$10$ABCDEFGHIJKLMNOPQRSTUVWXYZ012345','USER','2025-10-17 05:06:16'),(12,'1009012345','Isabella Ramírez','isabella.ramirez@email.com','isabellar','$2a$10$ABCDEFGHIJKLMNOPQRSTUVWXYZ012345','USER','2025-10-17 05:06:16'),(13,'1010123456','Andrés Silva','andres.silva@email.com','andressil','$2a$10$ABCDEFGHIJKLMNOPQRSTUVWXYZ012345','USER','2025-10-17 05:06:16'),(14,'1052815','Colgate','juan.jdsg2626@gmail.com','admin2','123','ADMIN','2025-10-17 10:41:01');
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -123,4 +123,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-10-17  0:02:38
+-- Dump completed on 2025-10-17 11:18:28

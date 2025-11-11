@@ -1,20 +1,19 @@
 package uis.edu.entorno.proyecto.inicial.service.impl;
 
-import uis.edu.entorno.proyecto.inicial.model.Reserva;
-import uis.edu.entorno.proyecto.inicial.model.Usuario;
-import uis.edu.entorno.proyecto.inicial.model.Cancha;
-import uis.edu.entorno.proyecto.inicial.model.dto.ReservaRequest;
-import uis.edu.entorno.proyecto.inicial.repository.ReservaRepository;
-import uis.edu.entorno.proyecto.inicial.repository.UsuarioRepository;
-import uis.edu.entorno.proyecto.inicial.repository.CanchaRepository;
-import uis.edu.entorno.proyecto.inicial.service.IReservaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import uis.edu.entorno.proyecto.inicial.model.Reserva;
+import uis.edu.entorno.proyecto.inicial.model.Cancha;
+import uis.edu.entorno.proyecto.inicial.model.Usuario;
+import uis.edu.entorno.proyecto.inicial.model.dto.ReservaRequest;
+import uis.edu.entorno.proyecto.inicial.repository.ReservaRepository;
+import uis.edu.entorno.proyecto.inicial.repository.CanchaRepository;
+import uis.edu.entorno.proyecto.inicial.repository.UsuarioRepository;
+import uis.edu.entorno.proyecto.inicial.service.IReservaService;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,12 +29,46 @@ public class ReservaServiceImpl implements IReservaService {
     @Autowired
     private CanchaRepository canchaRepository;
 
-    // Formatter para horas en formato 12h
-    private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm a");
-
     @Override
     public List<Reserva> findAll() {
-        return reservaRepository.findAll();
+        List<Reserva> reservas = reservaRepository.findAllByOrderByIdAsc();
+        boolean seActualizoAlguna = actualizarEstadosAutomaticamente();
+
+        if (seActualizoAlguna) {
+            reservas = reservaRepository.findAllByOrderByIdAsc();
+        }
+
+        return reservas;
+    }
+
+    @Override
+    public boolean actualizarEstadosAutomaticamente() {
+        List<Reserva> reservas = reservaRepository.findAll();
+        boolean seActualizo = false;
+        LocalDate hoy = LocalDate.now();
+        LocalTime ahora = LocalTime.now();
+
+        for (Reserva reserva : reservas) {
+            // Solo procesar reservas que no estén canceladas
+            if (!reserva.getEstado().equals("CANCELADA")) {
+                String nuevoEstado = determinarEstadoReserva(reserva.getFecha(), reserva.getHoraFin(), hoy, ahora);
+                if (!reserva.getEstado().equals(nuevoEstado)) {
+                    reserva.setEstado(nuevoEstado);
+                    reservaRepository.save(reserva);
+                    seActualizo = true;
+                }
+            }
+        }
+        return seActualizo;
+    }
+
+    // Sobrecarga del método para usar fechas específicas (útil para testing)
+    private String determinarEstadoReserva(LocalDate fecha, LocalTime horaFin, LocalDate hoy, LocalTime ahora) {
+        if (fecha.isBefore(hoy) || (fecha.isEqual(hoy) && horaFin.isBefore(ahora))) {
+            return "FINALIZADA";
+        } else {
+            return "ACTIVA";
+        }
     }
 
     @Override
@@ -54,123 +87,95 @@ public class ReservaServiceImpl implements IReservaService {
     }
 
     @Override
-    @Transactional
     public Reserva create(ReservaRequest reservaRequest) {
-        Usuario usuario = usuarioRepository.findById(reservaRequest.getUsuarioId())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        Cancha cancha = canchaRepository.findById(reservaRequest.getCanchaId())
-                .orElseThrow(() -> new RuntimeException("Cancha no encontrada"));
+        try {
+            // Validar que el usuario existe
+            Usuario usuario = usuarioRepository.findById(reservaRequest.getUsuarioId())
+                    .orElseThrow(() -> new RuntimeException("❌ Usuario no encontrado. Verifique el ID del usuario."));
 
-        // Validar horario de atención de la cancha
-        if (!isDentroHorarioAtencion(cancha, reservaRequest.getHoraInicio(), reservaRequest.getHoraFin())) {
-            String horaAperturaFormatted = formatTimeTo12Hours(cancha.getHoraApertura());
-            String horaCierreFormatted = formatTimeTo12Hours(cancha.getHoraCierre());
-            throw new RuntimeException("El horario de reserva está fuera del horario de atención de la cancha. " +
-                    "Horario de atención: " + horaAperturaFormatted + " - " + horaCierreFormatted);
-        }
+            // Validar que la cancha existe
+            Cancha cancha = canchaRepository.findById(reservaRequest.getCanchaId())
+                    .orElseThrow(() -> new RuntimeException("❌ Cancha no encontrada. Verifique el ID de la cancha."));
 
-        // Verificar capacidad de la cancha
-        if (!isCanchaDisponible(reservaRequest.getCanchaId(), reservaRequest.getFecha(),
-                reservaRequest.getHoraInicio(), reservaRequest.getHoraFin())) {
-            throw new RuntimeException("Capacidad máxima alcanzada para esta cancha en el horario seleccionado. Reserve otra cancha o cambie la hora.");
-        }
+            LocalDate hoy = LocalDate.now();
+            LocalTime ahora = LocalTime.now();
 
-        Reserva reserva = new Reserva();
-        reserva.setUsuario(usuario);
-        reserva.setCancha(cancha);
-        reserva.setFecha(reservaRequest.getFecha());
-        reserva.setHoraInicio(reservaRequest.getHoraInicio());
-        reserva.setHoraFin(reservaRequest.getHoraFin());
-        reserva.setEstado(reservaRequest.getEstado() != null ? reservaRequest.getEstado() : "ACTIVA");
-
-        return reservaRepository.save(reserva);
-    }
-
-    @Override
-    @Transactional
-    public Reserva update(Integer id, ReservaRequest reservaRequest) {
-        Reserva reserva = reservaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
-
-        Cancha cancha = canchaRepository.findById(reservaRequest.getCanchaId())
-                .orElseThrow(() -> new RuntimeException("Cancha no encontrada"));
-
-        // Validar horario de atención de la cancha
-        if (!isDentroHorarioAtencion(cancha, reservaRequest.getHoraInicio(), reservaRequest.getHoraFin())) {
-            String horaAperturaFormatted = formatTimeTo12Hours(cancha.getHoraApertura());
-            String horaCierreFormatted = formatTimeTo12Hours(cancha.getHoraCierre());
-            throw new RuntimeException("El horario de reserva está fuera del horario de atención de la cancha. " +
-                    "Horario de atención: " + horaAperturaFormatted + " - " + horaCierreFormatted);
-        }
-
-        // Verificar capacidad de la cancha (excluyendo la reserva actual)
-        if (!isCanchaDisponibleForUpdate(id, reservaRequest.getCanchaId(), reservaRequest.getFecha(),
-                reservaRequest.getHoraInicio(), reservaRequest.getHoraFin())) {
-            throw new RuntimeException("Capacidad máxima alcanzada para esta cancha en el horario seleccionado. Reserve otra cancha o cambie la hora.");
-        }
-
-        reserva.setUsuario(usuarioRepository.findById(reservaRequest.getUsuarioId())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado")));
-        reserva.setCancha(cancha);
-        reserva.setFecha(reservaRequest.getFecha());
-        reserva.setHoraInicio(reservaRequest.getHoraInicio());
-        reserva.setHoraFin(reservaRequest.getHoraFin());
-        reserva.setEstado(reservaRequest.getEstado());
-
-        return reservaRepository.save(reserva);
-    }
-
-    // Metodo auxiliar para formatear horas a formato 12h
-    private String formatTimeTo12Hours(LocalTime time) {
-        return time.format(timeFormatter).replace("AM", "a. m.").replace("PM", "p. m.");
-    }
-
-    private boolean isDentroHorarioAtencion(Cancha cancha, LocalTime horaInicio, LocalTime horaFin) {
-        return !horaInicio.isBefore(cancha.getHoraApertura()) &&
-                !horaFin.isAfter(cancha.getHoraCierre()) &&
-                !horaInicio.isAfter(horaFin);
-    }
-
-    private boolean isCanchaDisponible(Integer canchaId, LocalDate fecha, LocalTime horaInicio, LocalTime horaFin) {
-        Cancha cancha = canchaRepository.findById(canchaId)
-                .orElseThrow(() -> new RuntimeException("Cancha no encontrada"));
-
-        List<Reserva> reservasSolapadas = reservaRepository
-                .findByCanchaIdAndFechaAndHoraInicioLessThanAndHoraFinGreaterThanAndEstadoNot(
-                        canchaId, fecha, horaFin, horaInicio, "CANCELADA");
-
-        return reservasSolapadas.size() < cancha.getCapacidad();
-    }
-
-    private boolean isCanchaDisponibleForUpdate(Integer reservaId, Integer canchaId, LocalDate fecha,
-                                                LocalTime horaInicio, LocalTime horaFin) {
-        Cancha cancha = canchaRepository.findById(canchaId)
-                .orElseThrow(() -> new RuntimeException("Cancha no encontrada"));
-
-        List<Reserva> reservasSolapadas = reservaRepository
-                .findByCanchaIdAndFechaAndHoraInicioLessThanAndHoraFinGreaterThanAndEstadoNotAndIdNot(
-                        canchaId, fecha, horaFin, horaInicio, "CANCELADA", reservaId);
-
-        return reservasSolapadas.size() < cancha.getCapacidad();
-    }
-
-    @Override
-    public void actualizarEstadosAutomaticamente() {
-        List<Reserva> reservasActivas = reservaRepository.findByEstado("ACTIVA");
-        LocalDate hoy = LocalDate.now();
-
-        for (Reserva reserva : reservasActivas) {
-            if (reserva.getFecha().isBefore(hoy) ||
-                    (reserva.getFecha().equals(hoy) && reserva.getHoraFin().isBefore(LocalTime.now()))) {
-                reserva.setEstado("FINALIZADA");
-                reservaRepository.save(reserva);
+            // Validar que la fecha no sea en el pasado
+            if (reservaRequest.getFecha().isBefore(hoy)) {
+                throw new RuntimeException("❌ No se pueden crear reservas en fechas pasadas.");
             }
+
+            // Validar que si es para hoy, la hora de inicio sea al menos 30 minutos en el futuro
+            if (reservaRequest.getFecha().isEqual(hoy)) {
+                LocalTime horaMinima = ahora.plusMinutes(30); // Mínimo 30 minutos de anticipación
+
+                if (reservaRequest.getHoraInicio().isBefore(horaMinima)) {
+                    throw new RuntimeException("⏰ Para reservas del día actual, la hora de inicio debe ser al menos 30 minutos después de la hora actual (" +
+                            horaMinima + "). Por favor, seleccione una hora futura o cambie la fecha.");
+                }
+            }
+
+            // Validar horario de atención de la cancha
+            if (!estaEnHorarioAtencion(cancha, reservaRequest.getHoraInicio(), reservaRequest.getHoraFin())) {
+                throw new RuntimeException("🚫 La reserva está fuera del horario de atención de la cancha. " +
+                        "Horario de atención: " + formatTimeForDisplay(cancha.getHoraApertura()) + " - " + formatTimeForDisplay(cancha.getHoraCierre()));
+            }
+
+            // Validar que la hora de inicio sea antes de la hora de fin
+            if (!reservaRequest.getHoraInicio().isBefore(reservaRequest.getHoraFin())) {
+                throw new RuntimeException("❌ La hora de inicio debe ser anterior a la hora de fin.");
+            }
+
+            // Validar duración máxima de 2 horas por reserva
+            Duration duracion = Duration.between(reservaRequest.getHoraInicio(), reservaRequest.getHoraFin());
+            if (duracion.toMinutes() > 120) {
+                throw new RuntimeException("⏰ La reserva no puede exceder las 2 horas de duración.");
+            }
+
+            // Validar duración mínima de 30 minutos
+            if (duracion.toMinutes() < 30) {
+                throw new RuntimeException("⏰ La reserva debe tener una duración mínima de 30 minutos.");
+            }
+
+            // Validar límite de 2 horas por usuario por cancha por día
+            validarLimiteHorasUsuario(usuario.getId(), cancha.getId(), reservaRequest.getFecha(),
+                    reservaRequest.getHoraInicio(), reservaRequest.getHoraFin(), null);
+
+            // Validar disponibilidad
+            if (!isCanchaDisponible(reservaRequest.getCanchaId(),
+                    reservaRequest.getFecha().toString(),
+                    reservaRequest.getHoraInicio().toString(),
+                    reservaRequest.getHoraFin().toString(), null)) {
+                throw new RuntimeException("🔒 La cancha no está disponible en el horario seleccionado. " +
+                        "Ya existe una reserva activa en ese horario.");
+            }
+
+            Reserva reserva = new Reserva();
+            reserva.setUsuario(usuario);
+            reserva.setCancha(cancha);
+            reserva.setFecha(reservaRequest.getFecha());
+            reserva.setHoraInicio(reservaRequest.getHoraInicio());
+            reserva.setHoraFin(reservaRequest.getHoraFin());
+
+            // Determinar estado inicial basado en fecha y hora
+            reserva.setEstado(determinarEstadoReserva(reservaRequest.getFecha(), reservaRequest.getHoraFin()));
+
+            return reservaRepository.save(reserva);
+        } catch (RuntimeException e) {
+            // Relanzar la excepción con el mensaje específico
+            throw new RuntimeException(e.getMessage());
         }
     }
 
-    @Override
-    public boolean isCanchaDisponible(Integer canchaId, String fecha, String horaInicio, String horaFin) {
-        return true;
+    // Método auxiliar para formatear horas para mostrar en mensajes
+    private String formatTimeForDisplay(LocalTime time) {
+        int hour = time.getHour();
+        int minute = time.getMinute();
+        String amPm = hour >= 12 ? "p.m." : "a.m.";
+        int displayHour = hour % 12;
+        if (displayHour == 0) displayHour = 12;
+
+        return String.format("%d:%02d %s", displayHour, minute, amPm);
     }
 
     @Override
@@ -182,30 +187,128 @@ public class ReservaServiceImpl implements IReservaService {
     }
 
     @Override
-    @Transactional
     public void delete(Integer id) {
         reservaRepository.deleteById(id);
-        reasignarIdsReservas();
     }
 
-    private void reasignarIdsReservas() {
-        List<Reserva> reservas = reservaRepository.findAllByOrderByIdAsc();
-        int nuevoId = 1;
-        for (Reserva reserva : reservas) {
-            if (!reserva.getId().equals(nuevoId)) {
-                Reserva nuevaReserva = new Reserva();
-                nuevaReserva.setUsuario(reserva.getUsuario());
-                nuevaReserva.setCancha(reserva.getCancha());
-                nuevaReserva.setFecha(reserva.getFecha());
-                nuevaReserva.setHoraInicio(reserva.getHoraInicio());
-                nuevaReserva.setHoraFin(reserva.getHoraFin());
-                nuevaReserva.setEstado(reserva.getEstado());
-                nuevaReserva.setCreadoEn(reserva.getCreadoEn());
+    @Override
+    public boolean isCanchaDisponible(Integer canchaId, String fecha, String horaInicio, String horaFin) {
+        return isCanchaDisponible(canchaId, fecha, horaInicio, horaFin, null);
+    }
 
-                reservaRepository.save(nuevaReserva);
-                reservaRepository.delete(reserva);
+    private boolean isCanchaDisponible(Integer canchaId, String fecha, String horaInicio, String horaFin, Integer reservaId) {
+        LocalDate fechaLocal = LocalDate.parse(fecha);
+        LocalTime horaInicioLocal = LocalTime.parse(horaInicio);
+        LocalTime horaFinLocal = LocalTime.parse(horaFin);
+
+        List<Reserva> reservasSolapadas;
+        if (reservaId != null) {
+            reservasSolapadas = reservaRepository
+                    .findByCanchaIdAndFechaAndHoraInicioLessThanAndHoraFinGreaterThanAndEstadoNotAndIdNot(
+                            canchaId, fechaLocal, horaFinLocal, horaInicioLocal, "CANCELADA", reservaId);
+        } else {
+            reservasSolapadas = reservaRepository
+                    .findByCanchaIdAndFechaAndHoraInicioLessThanAndHoraFinGreaterThanAndEstadoNot(
+                            canchaId, fechaLocal, horaFinLocal, horaInicioLocal, "CANCELADA");
+        }
+
+        Cancha cancha = canchaRepository.findById(canchaId)
+                .orElseThrow(() -> new RuntimeException("Cancha no encontrada"));
+
+        return reservasSolapadas.size() < cancha.getCapacidad();
+    }
+
+    @Override
+    public Reserva update(Integer id, ReservaRequest reservaRequest) {
+        Reserva reservaExistente = reservaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
+
+        // Validar que el usuario existe
+        Usuario usuario = usuarioRepository.findById(reservaRequest.getUsuarioId())
+                .orElseThrow(() -> new RuntimeException("❌ Usuario no encontrado. Verifique el ID del usuario."));
+
+        // Validar que la cancha existe
+        Cancha cancha = canchaRepository.findById(reservaRequest.getCanchaId())
+                .orElseThrow(() -> new RuntimeException("❌ Cancha no encontrada. Verifique el ID de la cancha."));
+
+        LocalDate hoy = LocalDate.now();
+        LocalTime ahora = LocalTime.now();
+
+        // Validar que la fecha no sea en el pasado
+        if (reservaRequest.getFecha().isBefore(hoy)) {
+            throw new RuntimeException("❌ No se pueden actualizar reservas a fechas pasadas.");
+        }
+
+        // Validar que si es para hoy, la hora de inicio sea al menos 30 minutos en el futuro
+        if (reservaRequest.getFecha().isEqual(hoy)) {
+            LocalTime horaMinima = ahora.plusMinutes(30); // Mínimo 30 minutos de anticipación
+
+            if (reservaRequest.getHoraInicio().isBefore(horaMinima)) {
+                throw new RuntimeException("⏰ Para reservas del día actual, la hora de inicio debe ser al menos 30 minutos después de la hora actual (" +
+                        horaMinima + "). Por favor, seleccione una hora futura o cambie la fecha.");
             }
-            nuevoId++;
+        }
+
+        reservaExistente.setUsuario(usuario);
+        reservaExistente.setCancha(cancha);
+        reservaExistente.setFecha(reservaRequest.getFecha());
+        reservaExistente.setHoraInicio(reservaRequest.getHoraInicio());
+        reservaExistente.setHoraFin(reservaRequest.getHoraFin());
+
+        // Actualizar estado basado en nueva fecha y hora
+        reservaExistente.setEstado(determinarEstadoReserva(reservaRequest.getFecha(), reservaRequest.getHoraFin()));
+
+        return reservaRepository.save(reservaExistente);
+    }
+
+    // MÉTODOS PRIVADOS AUXILIARES - SIN DUPLICACIONES
+
+    private String determinarEstadoReserva(LocalDate fecha, LocalTime horaFin) {
+        LocalDate hoy = LocalDate.now();
+        LocalTime ahora = LocalTime.now();
+
+        if (fecha.isBefore(hoy) || (fecha.isEqual(hoy) && horaFin.isBefore(ahora))) {
+            return "FINALIZADA";
+        } else {
+            return "ACTIVA";
+        }
+    }
+
+    private boolean estaEnHorarioAtencion(Cancha cancha, LocalTime horaInicio, LocalTime horaFin) {
+        return !horaInicio.isBefore(cancha.getHoraApertura()) &&
+                !horaFin.isAfter(cancha.getHoraCierre()) &&
+                horaInicio.isBefore(horaFin);
+    }
+
+    private void validarLimiteHorasUsuario(Integer usuarioId, Integer canchaId, LocalDate fecha,
+                                           LocalTime horaInicio, LocalTime horaFin, Integer reservaIdExcluir) {
+        // Obtener todas las reservas del usuario para esta cancha en esta fecha (excluyendo CANCELADAS)
+        List<Reserva> reservasUsuario = reservaRepository.findByUsuarioIdAndCanchaIdAndFechaAndEstadoNot(
+                usuarioId, canchaId, fecha, "CANCELADA");
+
+        // Calcular el total de horas reservadas
+        long totalMinutos = 0;
+
+        for (Reserva reserva : reservasUsuario) {
+            // Excluir la reserva actual si estamos en modo edición
+            if (reservaIdExcluir != null && reserva.getId().equals(reservaIdExcluir)) {
+                continue;
+            }
+
+            Duration duracion = Duration.between(reserva.getHoraInicio(), reserva.getHoraFin());
+            totalMinutos += duracion.toMinutes();
+        }
+
+        // Agregar la duración de la nueva reserva
+        Duration duracionNueva = Duration.between(horaInicio, horaFin);
+        totalMinutos += duracionNueva.toMinutes();
+
+        // Convertir a horas (120 minutos = 2 horas)
+        if (totalMinutos > 120) {
+            long horasActuales = totalMinutos / 60;
+            long minutosActuales = totalMinutos % 60;
+            throw new RuntimeException("⏰ Límite excedido: Máximo 2 horas de reserva por usuario en la misma cancha por día. " +
+                    "Tiempo total reservado: " + horasActuales + "h " + minutosActuales + "m");
         }
     }
 }

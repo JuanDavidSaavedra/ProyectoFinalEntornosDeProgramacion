@@ -9,4 +9,5 @@ import java.util.List;
 public interface CanchaRepository extends JpaRepository<Cancha, Integer> {
     List<Cancha> findByDeporte(String deporte);
     List<Cancha> findByEstado(String estado);
+    List<Cancha> findByEstadoOrderByNombreAsc(String estado);
 }
