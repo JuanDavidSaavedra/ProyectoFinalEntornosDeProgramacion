@@ -3,6 +3,7 @@
 **Tecnologías utilizadas**
 
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.6-6DB33F?logo=springboot)]()
+[![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)]()
 [![Java](https://img.shields.io/badge/Java-17-ED8B00?logo=openjdk)]()
 [![Maven](https://img.shields.io/badge/Maven-4.0.0-C71A36?logo=apachemaven)]()
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-00618A?logo=mysql)]()
@@ -10,6 +11,7 @@
 [![Spring Web](https://img.shields.io/badge/Spring%20Web-REST%20API-0fa3b1?logo=spring)]()
 [![Spring DevTools](https://img.shields.io/badge/Spring%20DevTools-Enabled-orange?logo=spring)]()
 [![JUnit](https://img.shields.io/badge/JUnit-Tests-25A162?logo=junit5)]()
+
 
 
 ## Gestión del Proyecto aplicando la metodología SCRUM en Azure:
@@ -59,25 +61,28 @@ https://github.com/user-attachments/assets/9b6cc939-887c-49b8-ad15-beffec6dc7ff
 ## 🛠️ Stack Tecnológico
 
 ### **Backend**
-- **Spring Boot 3.x** - Framework principal de Java
-- **Spring Data JPA** - Persistencia de datos
-- **Maven** - Gestión de dependencias
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.6-6DB33F?logo=springboot)]()  
+[![Spring Data JPA](https://img.shields.io/badge/Spring%20Data%20JPA-Active-217346?logo=spring)]()  
+[![Maven](https://img.shields.io/badge/Maven-4.0.0-C71A36?logo=apachemaven)]()
 
 ### **Frontend**
-- **HTML5** - Estructura semántica
-- **CSS3** - Estilos y diseño responsive
-- **JavaScript** - Interactividad del cliente
-- **Bootstrap 5** - Framework CSS
-- **Materialize CSS** - Componentes UI
+[![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)]()  
+[![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)]()  
+[![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)]()  
+[![JavaScript](https://img.shields.io/badge/JavaScript-ES6-F7DF1E?logo=javascript&logoColor=black)]()  
+[![Bootstrap 5](https://img.shields.io/badge/Bootstrap-5-7952B3?logo=bootstrap&logoColor=white)]()  
+[![Materialize CSS](https://img.shields.io/badge/Materialize%20CSS-EC407A?logo=google&logoColor=white)]()
 
 ### **Base de Datos**
-- **MySQL 8.0** - Sistema gestor de base de datos
-- **JPA/Hibernate** - ORM para mapeo objeto-relacional
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-00618A?logo=mysql&logoColor=white)]()  
+[![Hibernate](https://img.shields.io/badge/Hibernate-ORM-59666C?logo=hibernate&logoColor=white)]()
 
 ### **Herramientas de Desarrollo**
-- **Git & GitHub** - Control de versiones
-- **Azure DevOps** - Gestión ágil (SCRUM)
-- **Eclipse/STS** - Entorno de desarrollo
+[![Git](https://img.shields.io/badge/Git-F05032?logo=git&logoColor=white)]()  
+[![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=white)]()  
+[![Azure DevOps](https://img.shields.io/badge/Azure%20DevOps-0078D7?logo=azuredevops&logoColor=white)]()  
+[![Eclipse](https://img.shields.io/badge/Eclipse%20IDE-2C2255?logo=eclipseide&logoColor=white)]()  
+[![Spring Tools Suite](https://img.shields.io/badge/Spring%20Tools%20Suite-6DB33F?logo=spring&logoColor=white)]()
 
 ---
 
