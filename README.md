@@ -1,7 +1,5 @@
 # 🏟️ Sistema de Reservas Deportivas - Plataforma Integral
 
----
-
 ## 🛠️ Stack Tecnológico
 
 ### **Backend**
@@ -31,9 +29,9 @@
 
 ---
 
-## Gestión del Proyecto aplicando la metodología SCRUM en Azure:
+## Gestión del Proyecto (Azure):
 
-### Para ver las historias de usuario que hemos realizado en los diferentes Sprints de este Proyecto ve al enlace de abajo y sigue esta ruta:
+### Para ver las historias de usuario que hemos realizado en los diferentes Sprints de este Proyecto usando la metodología de desarrollo de proyectos SCRUM ve al enlace de abajo y sigue esta ruta:
 
 - En Projects seleccionas "Reserva de canchas".
 - Menú de la izquierda en la opción "Boards".
