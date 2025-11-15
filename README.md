@@ -26,7 +26,7 @@ https://dev.azure.com/reservadechanchas/
 
 **Sistema de Reservas Deportivas** es una plataforma web completa diseñada para optimizar la gestión de instalaciones deportivas. Desarrollado como proyecto académico para la asignatura de Entornos de Programación, ofrece una solución integral que conecta administradores y usuarios en un ecosistema deportivo eficiente.
 
-https://github.com/JuanDavidSaavedra/ProyectoFinalEntornosDeProgramacion/blob/main/Video%20de%20Prueba%20Proyecto%20Final.gif
+![Video de Prueba Proyecto Final](https://github.com/user-attachments/assets/7e7847a6-d289-40f1-a290-4f8f5c598f9c)
 
 
 ### 🎯 Objetivos Principales
