@@ -1,5 +1,7 @@
 # 🏟️ Sistema de Reservas Deportivas - Plataforma Integral
 
+---
+
 ## 🛠️ Stack Tecnológico
 
 ### **Backend**
@@ -27,7 +29,7 @@
 [![Spring Tools Suite](https://img.shields.io/badge/Spring%20Tools%20Suite-6DB33F?logo=spring&logoColor=white)]()
 
 
-
+---
 
 ## Gestión del Proyecto aplicando la metodología SCRUM en Azure:
 
