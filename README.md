@@ -12,8 +12,6 @@
 [![JUnit](https://img.shields.io/badge/JUnit-Tests-25A162?logo=junit5)]()
 
 
-
-
 ## Gestión del Proyecto aplicando la metodología SCRUM en Azure:
 
 ### Para ver las historias de usuario que hemos realizado en los diferentes Sprints de este Proyecto ve al enlace de abajo y sigue esta ruta:
@@ -23,8 +21,6 @@
 
 https://dev.azure.com/reservadechanchas/
 
-
-  
 
 ## 📖 Descripción del Proyecto
 
