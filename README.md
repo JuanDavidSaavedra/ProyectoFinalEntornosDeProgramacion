@@ -6,7 +6,7 @@
 
 ## Gestión del Proyecto aplicando la metodología SCRUM en Azure:
 
-- ¡Para ver las historias de usuario que hemos realizado en los diferentes Sprints de este Proyecto ve al enlace de abajo!:
+### ¡Para ver las historias de usuario que hemos realizado en los diferentes Sprints de este Proyecto ve al enlace de abajo!
 - Sigue esta ruta: Menú de la izquierda en la opción "Boards" y luego en "Sprints"
 
 https://dev.azure.com/reservadechanchas/
