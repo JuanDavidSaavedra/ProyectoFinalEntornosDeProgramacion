@@ -22,18 +22,16 @@
 
 ## 🛠️ Stack Tecnológico
 
-### **Backend**
+### **BackEnd**
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.6-6DB33F?logo=springboot)]() 
 [![Spring Data JPA](https://img.shields.io/badge/Spring%20Data%20JPA-Active-217346?logo=spring)]() 
 [![Maven](https://img.shields.io/badge/Maven-4.0.0-C71A36?logo=apachemaven)]()
 
-### **Frontend**
+### **FrontEnd**
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)]() 
 [![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)]() 
 [![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)]() 
 [![JavaScript](https://img.shields.io/badge/JavaScript-ES6-F7DF1E?logo=javascript&logoColor=black)]() 
-[![Bootstrap 5](https://img.shields.io/badge/Bootstrap-5-7952B3?logo=bootstrap&logoColor=white)]() 
-[![Materialize CSS](https://img.shields.io/badge/Materialize%20CSS-EC407A?logo=google&logoColor=white)]()
 
 ### **Base de Datos**
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-00618A?logo=mysql&logoColor=white)]() 
@@ -121,8 +119,8 @@ https://github.com/user-attachments/assets/9b6cc939-887c-49b8-ad15-beffec6dc7ff
 - id, nombre, deporte, ubicacion, precio_hora, capacidad, hora_apertura, hora_cierre, estado, creado_en
 - Deportes: Fútbol, Tenis, Baloncesto, Vóley, etc.
 - Estados: ACTIVA, INACTIVA
-- Capacidad máxima: 30-50 personas
-- Horario: 05:00 - 22:00
+- Capacidad: depende del deporte.
+- Horario: formato de 12 horas.
 ```
 
 #### 📅 **Reservas**
@@ -200,17 +198,17 @@ https://github.com/user-attachments/assets/9b6cc939-887c-49b8-ad15-beffec6dc7ff
 
 4. **Ejecutar la Aplicación**
 
-   **Backend: Ejecuta directamente desde tu IDE o con:**
+   **BackEnd: Ejecuta directamente desde tu IDE o con:**
 
    ```
    mvn spring-boot:run
    ```
 
-   **Frontend: En otra terminal, dentro de src/main/resources/static/frontend-reservas:**
+   **FrontEnd: En otra terminal, dentro de src/main/resources/static/FrontEnd-reservas:**
 
-   ```
-   PS C:\Users\juanj\Documents\workspace-spring-tools-for-eclipse-4.31.0.RELEASE\ProyectoInicial\src\main\resources\static\frontend-reservas>
-   ```
+   
+   PS C:\Users\juanj\Documents\workspace-spring-tools-for-eclipse-4.31.0.RELEASE\ProyectoInicial\src\main\resources\static\FrontEnd-reservas>
+   
 
    Y ejecutas el comando:
 
@@ -218,15 +216,22 @@ https://github.com/user-attachments/assets/9b6cc939-887c-49b8-ad15-beffec6dc7ff
    npm start
    ```
    
-6. **Acceder al Sistema**
+   Si no tienes npm, lo puedes instalar con:
+
+   ```
+   npm install
+   npm start
+   ```
+   
+5. **Acceder al Sistema**
+
+   # Para revisar el BackEnd (Endpoints):
+   * http://localhost:8095/api/usuarios # o .../api/canchas o /api/reservas
+   
+   # Para el FrontEnd:
+   * http://localhost:3000
 
    
-   # Para revisar el Backend (Endpoints)
-   * http://localhost:8095/api/usuarios
-   * http://localhost:8095/api/canchas
-   * http://localhost:8095/api/reservas
-   
-
 ---
 
 ## 📁 Estructura del Proyecto
@@ -277,7 +282,7 @@ C:.
 ```
 
 ```
-C:...\ProyectoInicial\src\main\resources\static\frontend-reservas> (FrontEnd)
+C:...\ProyectoInicial\src\main\resources\static\FrontEnd-reservas> (FrontEnd)
 C:.
 |-- node
   |-- public
@@ -376,7 +381,6 @@ C:.
 
 ### ⚙️ Requerimientos No Funcionales
 
-* Disponibilidad del sistema en la nube con acceso 24/7.
 * Escalabilidad para soportar aumento de usuarios y reservas.
 * Interfaz intuitiva, con formularios simples y validaciones de usabilidad.
 * Código mantenible, documentado y versionado en GitHub.
