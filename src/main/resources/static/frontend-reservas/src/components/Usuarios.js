@@ -8,6 +8,16 @@ const Usuarios = () => {
     const [usuarios, setUsuarios] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    // filtros por columna
+    const [filters, setFilters] = useState({
+        id: '',
+        cedula: '',
+        nombre: '',
+        email: '',
+        usuario: '',
+        rol: ''
+    });
+
     useEffect(() => {
         if (!SessionHelper.isLoggedIn()) {
             window.location.href = '/login';
@@ -50,6 +60,28 @@ const Usuarios = () => {
 
     const isAdmin = SessionHelper.isAdmin();
 
+    const onFilterChange = (key, value) => {
+        setFilters(prev => ({ ...prev, [key]: value }));
+    };
+
+    const contains = (source, term) => {
+        if (term === undefined || term === null) return true;
+        if (!term.toString().trim()) return true;
+        if (source === undefined || source === null) return false;
+        return source.toString().toLowerCase().includes(term.toString().toLowerCase());
+    };
+
+    const filteredUsuarios = usuarios.filter(usuario => {
+        return (
+            contains(usuario.id, filters.id) &&
+            contains(usuario.cedula, filters.cedula) &&
+            contains(usuario.nombre, filters.nombre) &&
+            contains(usuario.email, filters.email) &&
+            contains(usuario.usuario, filters.usuario) &&
+            contains(usuario.rol, filters.rol)
+        );
+    });
+
     if (loading) {
         return (
             <div className="page-fade-in">
@@ -80,17 +112,65 @@ const Usuarios = () => {
                             <table className="table table-striped table-hover align-middle">
                                 <thead className="table-dark">
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Cédula</th>
-                                    <th>Nombre</th>
-                                    <th>Email</th>
-                                    <th>Usuario</th>
-                                    <th>Rol</th>
+                                    <th>
+                                        ID
+                                        <br />
+                                        <input
+                                            className="form-control form-control-sm mt-1"
+                                            placeholder="Buscar ID"
+                                            value={filters.id}
+                                            onChange={e => onFilterChange('id', e.target.value)}
+                                        />
+                                    </th>
+                                    <th>
+                                        Cédula
+                                        <br />
+                                        <input
+                                            className="form-control form-control-sm mt-1"
+                                            placeholder="Buscar cédula"
+                                            value={filters.cedula}
+                                            onChange={e => onFilterChange('cedula', e.target.value)}
+                                        />
+                                    </th>
+                                    <th>
+                                        Nombre
+                                        <br />
+                                        <input
+                                            className="form-control form-control-sm mt-1"
+                                            placeholder="Buscar nombre"
+                                            value={filters.nombre}
+                                            onChange={e => onFilterChange('nombre', e.target.value)}
+                                        />
+                                    </th>
+                                    <th>
+                                        Email
+                                        <br />
+                                        <input
+                                            className="form-control form-control-sm mt-1"
+                                            placeholder="Buscar email"
+                                            value={filters.email}
+                                            onChange={e => onFilterChange('email', e.target.value)}
+                                        />
+                                    </th>
+                                    <th>
+                                        Usuario
+                                        <br />
+                                        <input
+                                            className="form-control form-control-sm mt-1"
+                                            placeholder="Buscar usuario"
+                                            value={filters.usuario}
+                                            onChange={e => onFilterChange('usuario', e.target.value)}
+                                        />
+                                    </th>
+                                    <th>
+                                        Rol
+                                        <br />
+                                    </th>
                                     {isAdmin && <th id="actionsHeader">Acciones</th>}
                                 </tr>
                                 </thead>
                                 <tbody id="tablaUsuarios">
-                                {usuarios.map(usuario => {
+                                {filteredUsuarios.map(usuario => {
                                     let badgeClass = 'bg-secondary';
                                     if (usuario.rol === 'ADMIN') badgeClass = 'bg-danger';
                                     else if (usuario.rol === 'OPERATOR') badgeClass = 'bg-warning text-dark';
@@ -120,12 +200,23 @@ const Usuarios = () => {
                                         </tr>
                                     );
                                 })}
+                                {filteredUsuarios.length === 0 && (
+                                    <tr>
+                                        <td colSpan={isAdmin ? 7 : 6} className="text-center text-muted">No se encontraron resultados.</td>
+                                    </tr>
+                                )}
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
+            <footer className="footer">
+                <div className="container">
+                    <p className="mb-1">&copy; 2025 - Sistema de Reservas de Canchas Deportivas - Proyecto inicial Entornos de Programación - Grupo E1</p>
+                    <p className="lead"> Plataforma desarrollada para la gestión eficiente de instalaciones deportivas </p>
+                </div>
+            </footer>
         </div>
     );
 };

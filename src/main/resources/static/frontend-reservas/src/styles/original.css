@@ -156,6 +156,7 @@ h6 { font-size: clamp(0.9rem, 1.8vw, 1.1rem); }
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     border-radius: 10px;
+    text-align: center;
 }
 
 .table {
@@ -942,4 +943,3 @@ iframe {
         scroll-behavior: smooth;
     }
 }
-

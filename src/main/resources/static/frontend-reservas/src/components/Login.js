@@ -50,7 +50,7 @@ const Login = () => {
                         <div className="row align-items-center">
                             <div className="col-12 text-center">
                                 <h1 className="display-6 fw-bold text-primary mb-3">
-                                    Sistema de Reservas Deportivas
+                                    Sistema de Reservas de Canchas Deportivas
                                 </h1>
                                 <p className="lead text-dark mb-0">
                                     Plataforma integral para la gestión eficiente de canchas, usuarios y reservas deportivas
@@ -65,7 +65,7 @@ const Login = () => {
                                 <div className="row g-0">
                                     {/* Información del sistema */}
                                     <div className="col-lg-6 system-info">
-                                        <h3 className="mb-4 text-white">Bienvenido al Sistema</h3>
+                                        <h3 className="mb-4 text-white">¡Bienvenido al Sistema de Reservas de Canchas Deportivas!</h3>
                                         <p className="welcome-text">
                                             Plataforma especializada para la gestión integral de reservas en instalaciones
                                             deportivas.
@@ -230,7 +230,7 @@ const Login = () => {
 
                             <footer className="text-center mt-4 mb-3">
                                 <p className="text-light mb-1">
-                                    &copy; 2025 Sistema de Reservas Deportivas - Proyecto inicial Entornos de Programación - Grupo E1
+                                    &copy; 2025 Sistema de Reservas de Canchas Deportivas - Proyecto inicial Entornos de Programación - Grupo E1
                                 </p>
                                 <p className="text-light opacity-75 small">
                                     Plataforma desarrollada para la gestión eficiente de instalaciones deportivas

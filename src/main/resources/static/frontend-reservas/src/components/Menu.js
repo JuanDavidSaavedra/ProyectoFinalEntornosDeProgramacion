@@ -2,7 +2,6 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { SessionHelper } from '../services/api';
 import './Menu.css';
-import './Bienvenida.css';
 
 const Menu = () => {
     const navigate = useNavigate();
@@ -66,8 +65,8 @@ const Menu = () => {
             <div className="container page-container">
                 <div className="welcome-container fade-in"> {/* Agregar fade-in al contenido también */}
                     <div className="welcome-icon">🏆</div>
-                    <h1>Bienvenido al Sistema de Reservas Deportivas</h1>
-                    <p className="lead">Gestiona usuarios, canchas y reservas de manera eficiente</p>
+                    <h1> ¡Bienvenido al Sistema de Reservas de Canchas Deportivas! </h1>
+                    <p className="lead"> Gestiona usuarios, canchas y reservas de manera eficiente </p>
 
                     <div className="features-container">
                         <div className="row">
@@ -77,7 +76,7 @@ const Menu = () => {
                                         <img src="/img/usuarios.png" height="36" className="me-2" alt="Logo"/>
                                         <h3>Usuarios</h3>
                                     </Link>
-                                    <p>Gestiona los usuarios del sistema y sus permisos</p>
+                                    <p> Gestiona los usuarios del sistema y sus permisos </p>
                                 </div>
                             </div>
                             <div className="col-md-4">
@@ -86,7 +85,7 @@ const Menu = () => {
                                         <img src="/img/cancha.png" height="36" className="me-2" alt="Logo"/>
                                         <h3>Canchas</h3>
                                     </Link>
-                                    <p>Administra las canchas deportivas disponibles</p>
+                                    <p> Administra las canchas deportivas disponibles </p>
                                 </div>
                             </div>
                             <div className="col-md-4">
@@ -95,22 +94,22 @@ const Menu = () => {
                                         <img src="/img/reservas.png" height="36" className="me-2" alt="Logo"/>
                                         <h3>Reservas</h3>
                                     </Link>
-                                    <p>Controla las reservas y horarios de las canchas</p>
+                                    <p> Controla las reservas y horarios de las canchas </p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div className="mt-4">
-                        <p>Selecciona una opción del menú superior para comenzar</p>
+                        <p> Selecciona una opción del menú superior para comenzar </p>
                     </div>
                 </div>
             </div>
 
             <footer className="footer">
                 <div className="container">
-                    <p className="mb-1">&copy; 2025 Sistema de Reservas Deportivas - Proyecto inicial Entornos de Programación - Grupo E1</p>
-                    <p className="lead">Plataforma desarrollada para la gestión eficiente de instalaciones deportivas</p>
+                    <p className="mb-1">&copy; 2025 - Sistema de Reservas de Canchas Deportivas - Proyecto inicial Entornos de Programación - Grupo E1</p>
+                    <p className="lead"> Plataforma desarrollada para la gestión eficiente de instalaciones deportivas </p>
                 </div>
             </footer>
         </div>

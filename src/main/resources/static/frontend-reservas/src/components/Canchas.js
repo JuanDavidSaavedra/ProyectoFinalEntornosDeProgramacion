@@ -10,6 +10,18 @@ const Canchas = () => {
     const [ultimaActualizacion, setUltimaActualizacion] = useState(new Date());
     const intervalRef = useRef();
 
+    // filtros por columna (A3: input dentro del <th>)
+    const [filters, setFilters] = useState({
+        id: '',
+        nombre: '',
+        deporte: '',
+        ubicacion: '',
+        precio: '',
+        capacidad: '',
+        horario: '',
+        estado: ''
+    });
+
     useEffect(() => {
         if (!SessionHelper.isLoggedIn()) {
             window.location.href = '/login';
@@ -18,11 +30,11 @@ const Canchas = () => {
 
         cargarCanchas();
 
-        // Actualizar cada 30 segundos para ver cambios de estado
+        // Actualizar cada segundo para ver cambios de estado
         intervalRef.current = setInterval(() => {
             console.log('🔄 Actualizando estados de canchas automáticamente...');
             actualizarCanchasSilenciosamente();
-        }, 30000); // 30 segundos
+        }, 1000);
 
         return () => {
             if (intervalRef.current) {
@@ -92,6 +104,32 @@ const Canchas = () => {
 
     const isAdmin = SessionHelper.isAdmin();
 
+    const onFilterChange = (key, value) => {
+        setFilters(prev => ({ ...prev, [key]: value }));
+    };
+
+    // función utilitaria para comparar (contains, case-insensitive)
+    const contains = (source, term) => {
+        if (term === undefined || term === null) return true;
+        if (!term.toString().trim()) return true;
+        if (source === undefined || source === null) return false;
+        return source.toString().toLowerCase().includes(term.toString().toLowerCase());
+    };
+
+    const filteredCanchas = canchas.filter(cancha => {
+        const horarioStr = `${formatTime(cancha.horaApertura || '')} - ${formatTime(cancha.horaCierre || '')}`;
+        return (
+            contains(cancha.id, filters.id) &&
+            contains(cancha.nombre, filters.nombre) &&
+            contains(cancha.deporte, filters.deporte) &&
+            contains(cancha.ubicacion, filters.ubicacion) &&
+            contains(cancha.precioHora, filters.precio) &&
+            contains(cancha.capacidad, filters.capacidad) &&
+            contains(horarioStr, filters.horario) &&
+            contains(cancha.estado, filters.estado)
+        );
+    });
+
     if (loading) {
         return (
             <div className="page-fade-in">
@@ -130,19 +168,79 @@ const Canchas = () => {
                             <table className="table table-striped table-hover align-middle">
                                 <thead className="table-dark">
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Nombre</th>
-                                    <th>Deporte</th>
-                                    <th>Ubicación</th>
-                                    <th>Precio/Hora</th>
-                                    <th>Capacidad</th>
-                                    <th>Horario</th>
-                                    <th>Estado</th>
+                                    <th>
+                                        ID
+                                        <br />
+                                        <input
+                                            className="form-control form-control-sm mt-1"
+                                            placeholder="Buscar ID"
+                                            value={filters.id}
+                                            onChange={e => onFilterChange('id', e.target.value)}
+                                        />
+                                    </th>
+                                    <th>
+                                        Nombre
+                                        <br />
+                                        <input
+                                            className="form-control form-control-sm mt-1"
+                                            placeholder="Buscar nombre"
+                                            value={filters.nombre}
+                                            onChange={e => onFilterChange('nombre', e.target.value)}
+                                        />
+                                    </th>
+                                    <th>
+                                        Deporte
+                                        <br />
+                                    </th>
+                                    <th>
+                                        Ubicación
+                                        <br />
+                                        <input
+                                            className="form-control form-control-sm mt-1"
+                                            placeholder="Buscar ubicación"
+                                            value={filters.ubicacion}
+                                            onChange={e => onFilterChange('ubicacion', e.target.value)}
+                                        />
+                                    </th>
+                                    <th>
+                                        Precio/Hora
+                                        <br />
+                                        <input
+                                            className="form-control form-control-sm mt-1"
+                                            placeholder="Buscar precio"
+                                            value={filters.precio}
+                                            onChange={e => onFilterChange('precio', e.target.value)}
+                                        />
+                                    </th>
+                                    <th>
+                                        Capacidad
+                                        <br />
+                                        <input
+                                            className="form-control form-control-sm mt-1"
+                                            placeholder="Buscar capacidad"
+                                            value={filters.capacidad}
+                                            onChange={e => onFilterChange('capacidad', e.target.value)}
+                                        />
+                                    </th>
+                                    <th>
+                                        Horario
+                                        <br />
+                                        <input
+                                            className="form-control form-control-sm mt-1"
+                                            placeholder="Buscar horario"
+                                            value={filters.horario}
+                                            onChange={e => onFilterChange('horario', e.target.value)}
+                                        />
+                                    </th>
+                                    <th>
+                                        Estado
+                                        <br />
+                                    </th>
                                     {isAdmin && <th id="actionsHeader">Acciones</th>}
                                 </tr>
                                 </thead>
                                 <tbody id="tablaCanchas">
-                                {canchas.map(cancha => (
+                                {filteredCanchas.map(cancha => (
                                     <tr key={cancha.id}>
                                         <td>{cancha.id}</td>
                                         <td>{cancha.nombre}</td>
@@ -152,9 +250,9 @@ const Canchas = () => {
                                         <td>{cancha.capacidad} personas</td>
                                         <td>{formatTime(cancha.horaApertura)} - {formatTime(cancha.horaCierre)}</td>
                                         <td>
-                                                <span className={`badge ${cancha.estado === 'ACTIVA' ? 'bg-success' : 'bg-secondary'}`}>
-                                                    {cancha.estado}
-                                                </span>
+                                            <span className={`badge ${cancha.estado === 'ACTIVA' ? 'bg-success' : 'bg-secondary'}`}>
+                                                {cancha.estado}
+                                            </span>
                                         </td>
                                         {isAdmin && (
                                             <td>
@@ -171,12 +269,23 @@ const Canchas = () => {
                                         )}
                                     </tr>
                                 ))}
+                                {filteredCanchas.length === 0 && (
+                                    <tr>
+                                        <td colSpan={isAdmin ? 9 : 8} className="text-center text-muted">No se encontraron resultados.</td>
+                                    </tr>
+                                )}
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
+            <footer className="footer">
+                <div className="container">
+                    <p className="mb-1">&copy; 2025 - Sistema de Reservas de Canchas Deportivas - Proyecto inicial Entornos de Programación - Grupo E1</p>
+                    <p className="lead"> Plataforma desarrollada para la gestión eficiente de instalaciones deportivas </p>
+                </div>
+            </footer>
         </div>
     );
 };

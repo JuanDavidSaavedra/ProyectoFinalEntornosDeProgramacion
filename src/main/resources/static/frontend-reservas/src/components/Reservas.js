@@ -10,6 +10,19 @@ const Reservas = () => {
     const [ultimaActualizacion, setUltimaActualizacion] = useState(new Date());
     const intervalRef = useRef();
     const isInitialMount = useRef(true);
+    const currentUser = SessionHelper.getUser();
+    const isAdmin = SessionHelper.isAdmin();
+
+    // filtros por columna
+    const [filters, setFilters] = useState({
+        id: '',
+        usuario: '',
+        cancha: '',
+        fecha: '',
+        horaInicio: '',
+        horaFin: '',
+        estado: ''
+    });
 
     useEffect(() => {
         if (!SessionHelper.isLoggedIn()) {
@@ -19,11 +32,11 @@ const Reservas = () => {
 
         cargarReservas();
 
-        // Verificar y actualizar estados cada 15 segundos (más frecuente)
+        // Verificar y actualizar estados cada segundo
         intervalRef.current = setInterval(() => {
             console.log('🔄 Actualizando estados de reservas automáticamente...');
             actualizarReservasSilenciosamente();
-        }, 15000); // 15 segundos
+        }, 1000);
 
         return () => {
             if (intervalRef.current) {
@@ -111,13 +124,33 @@ const Reservas = () => {
         return `${hour12}${minutesPart} ${ampm}`;
     };
 
-    const currentUser = SessionHelper.getUser();
-    const isAdmin = SessionHelper.isAdmin();
+    const onFilterChange = (key, value) => {
+        setFilters(prev => ({ ...prev, [key]: value }));
+    };
+
+    const contains = (source, term) => {
+        if (term === undefined || term === null) return true;
+        if (!term.toString().trim()) return true;
+        if (source === undefined || source === null) return false;
+        return source.toString().toLowerCase().includes(term.toString().toLowerCase());
+    };
 
     // Filtrar reservas para usuarios normales
-    const reservasFiltradas = isAdmin ?
-        reservas :
-        reservas.filter(r => r.usuarioId === currentUser.id);
+    const reservasVisiblesPorUsuario = isAdmin ? reservas : reservas.filter(r => r.usuarioId === currentUser.id);
+
+    // aplicar filtros combinados (A3 dentro de <th>, parcial)
+    const filteredReservas = reservasVisiblesPorUsuario.filter(reserva => {
+        const fechaDisplay = reserva.fecha ? formatDateDisplay(reserva.fecha) : '';
+        return (
+            contains(reserva.id, filters.id) &&
+            contains(reserva.nombreUsuario || reserva.usuarioNombre || '', filters.usuario) &&
+            contains(reserva.nombreCancha || '', filters.cancha) &&
+            contains(fechaDisplay, filters.fecha) &&
+            contains(formatTime(reserva.horaInicio || ''), filters.horaInicio) &&
+            contains(formatTime(reserva.horaFin || ''), filters.horaFin) &&
+            contains(reserva.estado || '', filters.estado)
+        );
+    });
 
     if (loading) {
         return (
@@ -155,18 +188,75 @@ const Reservas = () => {
                             <table className="table table-striped table-hover align-middle">
                                 <thead className="table-dark">
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Usuario</th>
-                                    <th>Cancha</th>
-                                    <th>Fecha</th>
-                                    <th>Hora Inicio</th>
-                                    <th>Hora Fin</th>
-                                    <th>Estado</th>
+                                    <th>
+                                        ID
+                                        <br />
+                                        <input
+                                            className="form-control form-control-sm mt-1"
+                                            placeholder="Buscar ID"
+                                            value={filters.id}
+                                            onChange={e => onFilterChange('id', e.target.value)}
+                                        />
+                                    </th>
+                                    <th>
+                                        Usuario
+                                        <br />
+                                        <input
+                                            className="form-control form-control-sm mt-1"
+                                            placeholder="Buscar usuario"
+                                            value={filters.usuario}
+                                            onChange={e => onFilterChange('usuario', e.target.value)}
+                                        />
+                                    </th>
+                                    <th>
+                                        Cancha
+                                        <br />
+                                        <input
+                                            className="form-control form-control-sm mt-1"
+                                            placeholder="Buscar cancha"
+                                            value={filters.cancha}
+                                            onChange={e => onFilterChange('cancha', e.target.value)}
+                                        />
+                                    </th>
+                                    <th>
+                                        Fecha
+                                        <br />
+                                        <input
+                                            className="form-control form-control-sm mt-1"
+                                            placeholder="DD/MM/AAAA"
+                                            value={filters.fecha}
+                                            onChange={e => onFilterChange('fecha', e.target.value)}
+                                        />
+                                    </th>
+                                    <th>
+                                        Hora Inicio
+                                        <br />
+                                        <input
+                                            className="form-control form-control-sm mt-1"
+                                            placeholder="Buscar hora inicio"
+                                            value={filters.horaInicio}
+                                            onChange={e => onFilterChange('horaInicio', e.target.value)}
+                                        />
+                                    </th>
+                                    <th>
+                                        Hora Fin
+                                        <br />
+                                        <input
+                                            className="form-control form-control-sm mt-1"
+                                            placeholder="Buscar hora fin"
+                                            value={filters.horaFin}
+                                            onChange={e => onFilterChange('horaFin', e.target.value)}
+                                        />
+                                    </th>
+                                    <th>
+                                        Estado
+                                        <br />
+                                    </th>
                                     <th>Acciones</th>
                                 </tr>
                                 </thead>
                                 <tbody id="tablaReservas">
-                                {reservasFiltradas.map(reserva => {
+                                {filteredReservas.map(reserva => {
                                     const fechaDisplay = reserva.fecha ? formatDateDisplay(reserva.fecha) : '';
 
                                     let badgeClass = 'bg-secondary';
@@ -203,12 +293,23 @@ const Reservas = () => {
                                         </tr>
                                     );
                                 })}
+                                {filteredReservas.length === 0 && (
+                                    <tr>
+                                        <td colSpan={8} className="text-center text-muted">No se encontraron resultados.</td>
+                                    </tr>
+                                )}
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
+            <footer className="footer">
+                <div className="container">
+                    <p className="mb-1">&copy; 2025 - Sistema de Reservas de Canchas Deportivas - Proyecto inicial Entornos de Programación - Grupo E1</p>
+                    <p className="lead"> Plataforma desarrollada para la gestión eficiente de instalaciones deportivas </p>
+                </div>
+            </footer>
         </div>
     );
 };
